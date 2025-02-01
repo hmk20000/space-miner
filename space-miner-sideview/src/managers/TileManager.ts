@@ -35,24 +35,24 @@ export class TileManager {
         if (tile?.properties?.isMineable) {
             layer.removeTileAt(x, y);
 
-            this.updateSurroundingTiles(layer, x, y);
+            // this.updateSurroundingTiles(layer, x, y);
         }
     }
 
-    private updateSurroundingTiles(layer: Phaser.Tilemaps.TilemapLayer, x: number, y: number): void {
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dy = -1; dy <= 1; dy++) {
-                if (dx === 0 && dy === 0) continue;
+    // private updateSurroundingTiles(layer: Phaser.Tilemaps.TilemapLayer, x: number, y: number): void {
+    //     for (let dx = -1; dx <= 1; dx++) {
+    //         for (let dy = -1; dy <= 1; dy++) {
+    //             if (dx === 0 && dy === 0) continue;
                 
-                const targetX = x + dx;
-                const targetY = y + dy;
+    //             const targetX = x + dx;
+    //             const targetY = y + dy;
                 
-                if (layer.hasTileAt(targetX, targetY)) {
-                    this.updateTileShape(layer, targetX, targetY);
-                }
-            }
-        }
-    }
+    //             if (layer.hasTileAt(targetX, targetY)) {
+    //                 this.updateTileShape(layer, targetX, targetY);
+    //             }
+    //         }
+    //     }
+    // }
 
     public setTileProperties(tile: Phaser.Tilemaps.Tile, properties: any = { isMineable: true }): void {
         if (!tile) return;
@@ -120,33 +120,11 @@ export class TileManager {
             if (!left && right) {  // 왼쪽 위 모서리
                 layer.putTileAt(1, x, y);
                 tile.properties.slope = 'left';
-                // 왼쪽 하단에 작은 콜라이더
-                const collisionWidth = BLOCK_CONFIG.SIZE / 3;
                 tile.setCollision(false);
-                tile.setCollisionCallback((sprite: Phaser.Physics.Arcade.Sprite) => {
-                    const body = sprite.body as Phaser.Physics.Arcade.Body;
-                    const tileWorldX = tile.tilemapLayer.tileToWorldX(tile.x);
-                    const tileWorldY = tile.tilemapLayer.tileToWorldY(tile.y);
-                    
-                    // 왼쪽 하단 영역에서만 충돌
-                    return body.x < tileWorldX + collisionWidth && 
-                           body.y > tileWorldY + BLOCK_CONFIG.SIZE - collisionWidth;
-                });
             } else if (!right && left) {  // 오른쪽 위 모서리
                 layer.putTileAt(2, x, y);
                 tile.properties.slope = 'right';
-                // 오른쪽 하단에 작은 콜라이더
-                const collisionWidth = BLOCK_CONFIG.SIZE / 3;
                 tile.setCollision(false);
-                tile.setCollisionCallback((sprite: Phaser.Physics.Arcade.Sprite) => {
-                    const body = sprite.body as Phaser.Physics.Arcade.Body;
-                    const tileWorldX = tile.tilemapLayer.tileToWorldX(tile.x);
-                    const tileWorldY = tile.tilemapLayer.tileToWorldY(tile.y);
-                    
-                    // 오른쪽 하단 영역에서만 충돌
-                    return body.x > tileWorldX + BLOCK_CONFIG.SIZE - collisionWidth && 
-                           body.y > tileWorldY + BLOCK_CONFIG.SIZE - collisionWidth;
-                });
             } else {
                 // 일반 타일은 전체 충돌
                 tile.setCollision(true);

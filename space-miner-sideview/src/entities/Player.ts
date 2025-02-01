@@ -9,7 +9,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     private worldManager: WorldManager;
     
     constructor(scene: Phaser.Scene, x: number, y: number, worldManager: WorldManager) {
-        super(scene, x, y);
+        super(scene, x, y, 'player');
         this.worldManager = worldManager;
 
         const radius = PLAYER_CONFIG.SIZE.WIDTH / 2;
@@ -96,7 +96,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if (!tile || !this.body) return false;
 
         const body = this.body as Phaser.Physics.Arcade.Body;
-        const tileWorldY = tile.tilemapLayer.tileToWorldY(tile.y);
+        const tileWorldY = tile.tilemapLayer?.tileToWorldY(tile.y) || 0;
         const playerBottom = body.position.y + body.height;
         
         // 플레이어가 타일 위에 있고, 높이 차이가 1블록 이하일 때

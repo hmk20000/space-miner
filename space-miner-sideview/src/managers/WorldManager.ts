@@ -100,18 +100,6 @@ export class WorldManager {
         this.saveChunkData(chunkId);
     }
 
-    private saveChunks(): void {
-        // 수정된 청크 데이터만 저장
-        const modifiedChunks = Array.from(this.chunks.entries())
-            .filter(([_, data]) => data.changes.length > 0)
-            .reduce((acc, [id, data]) => {
-                acc[id] = data;
-                return acc;
-            }, {} as Record<string, ChunkData>);
-
-        localStorage.setItem('worldData', JSON.stringify(modifiedChunks));
-    }
-
     private loadChunks(): void {
         const savedData = localStorage.getItem('worldData');
         if (savedData) {
@@ -127,7 +115,7 @@ export class WorldManager {
     }
 
     public isChunkModified(chunkId: ChunkId): boolean {
-        return this.chunks.get(chunkId)?.changes.length > 0 || false;
+        return (this.chunks.get(chunkId)?.changes.length || 0) > 0;
     }
 
     public getActiveChunks(): ChunkId[] {
@@ -229,8 +217,10 @@ export class WorldManager {
     }
 
     public getChunkAtWorldPosition(worldX: number, worldY: number) {
+        if (!this.scene) return null;
+
         const chunkX = Math.floor(worldX / (CHUNK_CONFIG.BLOCKS_WIDTH * BLOCK_CONFIG.SIZE));
-        const baseY = Math.floor(this.scene?.cameras.main.height * 0.5) || 0;
+        const baseY = Math.floor(this.scene.cameras.main.height * 0.5) || 0;
         const relativeY = worldY - baseY;
         const chunkY = Math.floor(relativeY / (CHUNK_CONFIG.BLOCKS_HEIGHT * BLOCK_CONFIG.SIZE));
 
@@ -239,8 +229,10 @@ export class WorldManager {
     }
 
     public placeTileAtWorldPosition(worldX: number, worldY: number, tileIndex: number): void {
+        if (!this.scene) return;
+
         const chunkX = Math.floor(worldX / (CHUNK_CONFIG.BLOCKS_WIDTH * BLOCK_CONFIG.SIZE));
-        const baseY = Math.floor(this.scene?.cameras.main.height * 0.5) || 0;
+        const baseY = Math.floor(this.scene.cameras.main.height * 0.5) || 0;
         const relativeY = worldY - baseY;
         const chunkY = Math.floor(relativeY / (CHUNK_CONFIG.BLOCKS_HEIGHT * BLOCK_CONFIG.SIZE));
         

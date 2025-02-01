@@ -92,14 +92,14 @@ export class ChunkManager {
         }
 
         // 모든 타일의 모양 업데이트
-        for (let tileX = 0; tileX < tilemap.width; tileX++) {
-            for (let tileY = 0; tileY < tilemap.height; tileY++) {
-                const tile = layer.getTileAt(tileX, tileY);
-                if (tile) {
-                    this.tileManager.updateTileShape(layer, tileX, tileY);
-                }
-            }
-        }
+        // for (let tileX = 0; tileX < tilemap.width; tileX++) {
+        //     for (let tileY = 0; tileY < tilemap.height; tileY++) {
+        //         const tile = layer.getTileAt(tileX, tileY);
+        //         if (tile) {
+        //             this.tileManager.updateTileShape(layer, tileX, tileY);
+        //         }
+        //     }
+        // }
 
         // 5. 충돌 설정
         layer.setCollisionByProperty({ isMineable: true });

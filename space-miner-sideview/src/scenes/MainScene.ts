@@ -1,10 +1,9 @@
 import Phaser from 'phaser';
 
 import { Player } from '../entities/Player';
-import { PLAYER_CONFIG, SCENE_KEYS, BLOCK_CONFIG } from '../constants/GameConstants';
+import { PLAYER_CONFIG, SCENE_KEYS } from '../constants/GameConstants';
 import { InputManager } from '../managers/InputManager';
 import { InventoryUI } from '../ui/InventoryUI';
-import { ChunkManager } from '../managers/ChunkManager';
 import { WorldManager } from '../managers/WorldManager';
 
 // Custom Scene type
@@ -17,13 +16,11 @@ export class MainScene extends Phaser.Scene implements MyScene {
     public player!: Player;
     private inputManager: InputManager;
     private inventoryUI!: InventoryUI;
-    private chunkManager: ChunkManager;
-    private worldManager: WorldManager;
+    public worldManager: WorldManager;
 
     constructor() {
         super({ key: SCENE_KEYS.MAIN });
         this.inputManager = InputManager.getInstance();
-        this.chunkManager = ChunkManager.getInstance();
         this.worldManager = WorldManager.getInstance();
     }
 
@@ -122,10 +119,6 @@ export class MainScene extends Phaser.Scene implements MyScene {
     update() {
         if (!this.player) return;
         this.handlePlayerMovement();
-        
-        // 플레이어 업데이트 (채굴 진행도 포함)
-        this.player.update(this.time.now, this.time.delta);
-        
         this.worldManager.update(this.player.x, this.player.y);
 
         if (this.inventoryUI) {
