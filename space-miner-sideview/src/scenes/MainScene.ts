@@ -92,18 +92,28 @@ export class MainScene extends Phaser.Scene implements MyScene {
         this.worldManager.init(this);
         this.worldManager.setupCollision(this.player);
 
-        // 우클릭으로 즉시 채굴
+        // 우클릭으로 채굴, 좌클릭으로 설치
         this.input.mouse?.disableContextMenu();
         this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+            const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+            
             if (pointer.rightButtonDown()) {
-                const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+                // 채굴
                 this.player.mine(worldPoint.x, worldPoint.y);
+            } else if (pointer.leftButtonDown()) {
+                // 설치
+                this.player.placeBlock(worldPoint.x, worldPoint.y);
             }
         });
 
         // 채굴 완료 이벤트 처리
         this.game.events.on('miningComplete', (target: { x: number; y: number }) => {
             this.worldManager.removeTileAtWorldPosition(target.x, target.y);
+        });
+
+        // 블록 설치 이벤트 처리
+        this.game.events.on('blockPlace', (data: { x: number; y: number; type: string }) => {
+            this.worldManager.placeTileAtWorldPosition(data.x, data.y, 0);  // 0은 기본 타일 인덱스
         });
 
         this.worldManager.update(this.player.x, this.player.y);

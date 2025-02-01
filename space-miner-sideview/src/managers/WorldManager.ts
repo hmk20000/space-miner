@@ -238,4 +238,23 @@ export class WorldManager {
         return this.chunkManager.getChunk(chunkId);
     }
 
+    public placeTileAtWorldPosition(worldX: number, worldY: number, tileIndex: number): void {
+        const chunkX = Math.floor(worldX / (CHUNK_CONFIG.BLOCKS_WIDTH * BLOCK_CONFIG.SIZE));
+        const baseY = Math.floor(this.scene?.cameras.main.height * 0.5) || 0;
+        const relativeY = worldY - baseY;
+        const chunkY = Math.floor(relativeY / (CHUNK_CONFIG.BLOCKS_HEIGHT * BLOCK_CONFIG.SIZE));
+        
+        const chunkId = `${chunkX},${chunkY}` as ChunkId;
+        const chunk = this.chunkManager.getChunk(chunkId);
+        
+        if (chunk) {
+            const tileX = Math.floor(chunk.layer.worldToTileX(worldX));
+            const tileY = Math.floor(chunk.layer.worldToTileY(worldY));
+            
+            // 타일 설치 및 변경 내역 추가
+            this.chunkManager.setTileAt(chunkId, tileX, tileY, tileIndex);
+            this.addTileChange(chunkId, tileX, tileY, tileIndex);
+        }
+    }
+
 } 

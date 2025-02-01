@@ -109,6 +109,32 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         return true;  // 일반 충돌 처리
     }
 
+    public placeBlock(worldX: number, worldY: number): void {
+        const chunk = this.worldManager.getChunkAtWorldPosition(worldX, worldY);
+        if (!chunk) return;
+
+        const relativeX = worldX - chunk.layer.x;
+        const relativeY = worldY - chunk.layer.y;
+        
+        const tileX = Math.floor(relativeX / BLOCK_CONFIG.SIZE);
+        const tileY = Math.floor(relativeY / BLOCK_CONFIG.SIZE);
+
+        // 해당 위치에 타일이 없는지 확인
+        const tile = chunk.layer.getTileAt(tileX, tileY);
+        if (!tile) {
+            // 인벤토리에서 흙 블록 찾기
+            const inventoryManager = InventoryManager.getInstance();
+            if (inventoryManager.removeItem('dirt_block', 1)) {
+                // 블록 설치
+                this.scene.game.events.emit('blockPlace', { 
+                    x: worldX, 
+                    y: worldY, 
+                    type: 'dirt_block' 
+                });
+            }
+        }
+    }
+
     destroy(fromScene?: boolean) {
         super.destroy(fromScene);
     }
